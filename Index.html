@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kejutan Spesial Untukmu!</title>
+    <style>
+        /* --- GAYA CSS --- */
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #1a1a1a; /* Latar belakang gelap luar */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+            color: white;
+        }
+
+        /* Container Utama */
+        #main-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer; /* Menunjukkan bisa diklik */
+        }
+
+        /* --- BAGIAN 1: KADO (Tampilan Awal) --- */
+        #gift-box {
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            background-color: #ff4d4d; /* Warna kado jika tidak ada gambar */
+            /* uncomment baris di bawah jika ada gambar kado.png */
+            /* background-image: url('kado.png'); */
+            background-size: cover;
+            background-position: center;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(255, 77, 77, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: transform 0.3s ease, opacity 0.5s ease;
+            z-index: 10;
+        }
+
+        #gift-box:hover {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        #click-text {
+            position: absolute;
+            bottom: -40px;
+            font-size: 1.2rem;
+            color: #ffcccc;
+            animation: pulse 1.5s infinite;
+            white-space: nowrap;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.5; }
+            50% { opacity: 1; }
+            100% { opacity: 0.5; }
+        }
+
+        /* --- BAGIAN 2: KEJUTAN (Hati & Ucapan) --- */
+        #surprise-content {
+            display: none; /* Sembunyi dulu */
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 1s ease;
+            width: 90%;
+            max-width: 600px;
+        }
+
+        /* Gaya Kotak Ucapan */
+        .message-box {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 25px;
+            border-radius: 20px;
+            backdrop-filter: blur(5px);
+            border: 1px rgba(255, 255, 255, 0.2) solid;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            margin-bottom: 40px;
+            width: 100%;
+        }
+
+        .message-box h1 {
+            font-size: 2.5rem;
+            margin-top: 0;
+            background: linear-gradient(to right, #ff4d4d, #f9cb9c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Efek Ketik */
+        #typing-text {
+            font-size: 1.3rem;
+            line-height: 1.6;
+            margin: 0;
+            min-height: 1.6em; /* Mencegah lonjakan layout */
+        }
+
+        /* Gaya Hati Interaktif */
+        .heart-container {
+            position: relative;
+            width: 250px;
+            height: 250px;
+            margin-top: 20px;
+            animation: heartBeat 1.5s infinite; /* Detak jantung */
+        }
+
+        .heart {
+            position: absolute;
+            width: 125px;
+            height: 125px;
+            background-color: #ff4d4d;
+            background-image: url('foto.jpg'); /* GANTI DENGAN FOTO ANDA */
+            background-size: cover;
+            background-position: center;
+            transform: rotate(-45deg);
+            top: 62.5px;
+            left: 62.5px;
+            border: 2px solid white;
+            box-shadow: 0 0 20px rgba(255, 77, 77, 0.8);
+        }
+
+        .heart::before,
+        .heart::after {
+            content: "";
+            position: absolute;
+            width: 125px;
+            height: 125px;
+            background-color: inherit;
+            background-image: inherit;
+            background-size: cover;
+            background-position: inherit;
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+
+        .heart::before {
+            top: -62.5px;
+            left: 0;
+            border-bottom: none;
+            border-right: none;
+        }
+
+        .heart::after {
+            top: 0;
+            left: 62.5px;
+            border-left: none;
+            border-bottom: none;
+        }
+
+        @keyframes heartBeat {
+            0% { transform: scale(1); }
+            15% { transform: scale(1.1); }
+            30% { transform: scale(1); }
+            45% { transform: scale(1.15); }
+            60% { transform: scale(1); }
+        }
+
+        /* --- BAGIAN 3: PARTIKEL & EFEK --- */
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0;
+            animation: popOut forwards;
+        }
+
+        @keyframes popOut {
+            0% { transform: translate(0, 0) scale(0); opacity: 1; }
+            100% { transform: translate(var(--dx), var(--dy)) scale(1); opacity: 0; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <audio id="birthday-song" loop>
+        <source src="lagu.mp3" type="audio/mpeg">
+        Browser Anda tidak mendukung audio.
+    </audio>
+
+    <div id="main-container" onclick="openGift()">
+        
+        <div id="gift-box">
+            <div id="click-text">Klik untuk Kejutan! 🎁</div>
+        </div>
+
+        <div id="surprise-content">
+            <div class="message-box">
+                <h1>Selamat Ulang Tahun!</h1>
+                <p id="typing-text"></p>
+            </div>
+            
+            <div class="heart-container">
+                <div class="heart"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // --- JAVASCRIPT ---
+
+        // Teks ucapan yang akan diketik
+        const textToType = "Untuk seseorang yang spesial... Semoga harimu penuh tawa, kebahagiaan, dan semua impianmu menjadi kenyataan. Terima kasih sudah menjadi bagian dari hidupku! ❤️";
+        const typingSpeed = 50; // milidetik per karakter
+
+        let isOpened = false;
+
+        function openGift() {
+            if (isOpened) return; // Mencegah klik ganda
+            isOpened = true;
+
+            const giftBox = document.getElementById('gift-box');
+            const surpriseContent = document.getElementById('surprise-content');
+            const song = document.getElementById('birthday-song');
+
+            // 1. Efek Suara (Putar Lagu)
+            song.play().catch(e => console.log("Audio autoplay diblokir browser"));
+
+            // 2. Animasi Ledakan Kado (Partikel)
+            createExplosion(giftBox.offsetLeft + 75, giftBox.offsetTop + 75);
+
+            // 3. Sembunyikan Kado
+            giftBox.style.transform = 'scale(0) rotate(-20deg)';
+            giftBox.style.opacity = '0';
+
+            // 4. Tampilkan Konten Kejutan
+            setTimeout(() => {
+                giftBox.style.display = 'none';
+                surpriseContent.style.display = 'flex';
+                // Trigger reflow untuk animasi fade-in
+                surpriseContent.offsetHeight; 
+                surpriseContent.style.opacity = '1';
+                
+                // 5. Mulai Efek Mengetik
+                setTimeout(startTyping, 1000);
+                
+                // 6. Mulai Partikel Latar Belakang
+                setInterval(createBackgroundParticle, 200);
+            }, 500);
+        }
+
+        // Fungsi Efek Mengetik
+        function startTyping() {
+            const textElement = document.getElementById('typing-text');
+            let charIndex = 0;
+
+            function type() {
+                if (charIndex < textToType.length) {
+                    textElement.innerHTML += textToType.charAt(charIndex);
+                    charIndex++;
+                    setTimeout(type, typingSpeed);
+                }
+            }
+            type();
+        }
+
+        // Fungsi Animasi Ledakan (Partikel Warna-warni)
+        function createExplosion(x, y) {
+            const colors = ['#ff4d4d', '#f9cb9c', '#fff', '#ffcccc'];
+            for (let i = 0; i < 40; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                // Gaya acak
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                const size = Math.random() * 10 + 5 + 'px';
+                particle.style.width = size;
+                particle.style.height = size;
+                particle.style.backgroundColor = color;
+                
+                // Arah ledakan acak (menggunakan CSS variables)
+                const dx = (Math.random() - 0.5) * 300 + 'px';
+                const dy = (Math.random() - 0.5) * 300 + 'px';
+                particle.style.setProperty('--dx', dx);
+                particle.style.setProperty('--dy', dy);
+                
+                // Posisi awal
+                particle.style.left = x + 'px';
+                particle.style.top = y + 'px';
+                
+                // Durasi acak
+                particle.style.animationDuration = Math.random() * 0.5 + 0.5 + 's';
+
+                document.body.appendChild(particle);
+
+                // Hapus setelah animasi
+                setTimeout(() => particle.remove(), 1000);
+            }
+        }
+
+        // Fungsi Partikel Latar Belakang (Seperti Bintang/Hati Jatuh)
+        function createBackgroundParticle() {
+            const container = document.getElementById('main-container');
+            const particle = document.createElement('div');
+            particle.classList.add('particle');
+            
+            const isHeart = Math.random() > 0.5;
+            
+            // Gaya partikel latar
+            particle.style.width = isHeart ? '10px' : '5px';
+            particle.style.height = isHeart ? '10px' : '5px';
+            particle.style.backgroundColor = isHeart ? '#ffcccc' : '#fff';
+            particle.style.borderRadius = '50%';
+            particle.style.opacity = '0.5';
+            
+            // Posisi jatuh acak
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.top = '-10px';
+            
+            // Animasi jatuh
+            particle.style.animation = `fall ${Math.random() * 3 + 2}s linear forwards`;
+            
+            container.appendChild(particle);
+            
+            // Hapus setelah jatuh
+            setTimeout(() => particle.remove(), 5000);
+        }
+
+        // Tambahkan gaya animasi jatuh secara dinamis
+        const sheet = window.document.styleSheets[0];
+        sheet.insertRule('@keyframes fall { to { transform: translateY(100vh); opacity: 0; } }', sheet.cssRules.length);
+
+    </script>
+</body>
+</html>
