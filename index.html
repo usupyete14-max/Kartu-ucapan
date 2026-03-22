@@ -3,37 +3,317 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kejutan Spesial Untukmu!</title>
+    <title>Kejutan Untukmu!</title>
+    <!-- Font Cantik -->
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
     <style>
-        /* --- GAYA CSS --- */
+        :root {
+            --pink-primary: #ff4d6d;
+            --pink-soft: #ffb3c1;
+            --dark-bg: #0f0f0f;
+        }
+
         body, html {
             margin: 0;
             padding: 0;
             width: 100%;
             height: 100%;
+            background-color: var(--dark-bg);
+            font-family: 'Quicksand', sans-serif;
+            overflow: hidden;
             display: flex;
             justify-content: center;
             align-items: center;
-            background-color: #1a1a1a; /* Latar belakang gelap luar */
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            overflow: hidden;
             color: white;
+            touch-action: manipulation;
         }
 
-        /* Container Utama */
-        #main-container {
-            position: relative;
+        /* Latar Belakang Berbintang */
+        #stars-container {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
+            z-index: 0;
+        }
+
+        /* KADO AWAL */
+        #gift-screen {
+            position: absolute;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: all 0.8s ease;
+        }
+
+        .gift-box {
+            width: 140px;
+            height: 140px;
+            background-color: var(--pink-primary);
+            border-radius: 15px;
             display: flex;
             justify-content: center;
             align-items: center;
-            cursor: pointer; /* Menunjukkan bisa diklik */
+            font-size: 70px;
+            box-shadow: 0 0 50px rgba(255, 77, 109, 0.5);
+            cursor: pointer;
+            animation: shake 1.5s infinite;
         }
 
-        /* --- BAGIAN 1: KADO (Tampilan Awal) --- */
-        #gift-box {
+        @keyframes shake {
+            0%, 100% { transform: rotate(0); }
+            20% { transform: rotate(10deg); }
+            40% { transform: rotate(-10deg); }
+            60% { transform: rotate(5deg); }
+            80% { transform: rotate(-5deg); }
+        }
+
+        .click-me {
+            margin-top: 20px;
+            color: var(--pink-soft);
+            font-weight: 600;
+            letter-spacing: 2px;
+            animation: fadeInOut 2s infinite;
+        }
+
+        /* KONTEN UTAMA */
+        #main-content {
+            display: none;
+            opacity: 0;
+            flex-direction: column;
+            align-items: center;
+            width: 90%;
+            max-width: 400px;
+            z-index: 10;
+            transition: opacity 1s ease;
+        }
+
+        .text-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(15px);
+            padding: 25px;
+            border-radius: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+        }
+
+        h1 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2.5rem;
+            margin: 0 0 10px 0;
+            color: var(--pink-primary);
+        }
+
+        #typing-box {
+            font-size: 1rem;
+            line-height: 1.6;
+            min-height: 100px;
+        }
+
+        /* BUKU FOTO / ALBUM */
+        .album-container {
+            position: relative;
+            width: 220px;
+            height: 280px;
+            perspective: 1000px;
+        }
+
+        .card {
             position: absolute;
+            width: 100%;
+            height: 100%;
+            background: white;
+            border-radius: 15px;
+            padding: 10px;
+            box-sizing: border-box;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            transition: transform 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.5s;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card img {
+            width: 100%;
+            height: 82%;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        .card .label {
+            height: 18%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.1rem;
+        }
+
+        /* Tumpukan Kartu */
+        .card:nth-child(1) { transform: rotate(-3deg); z-index: 3; }
+        .card:nth-child(2) { transform: rotate(2deg); z-index: 2; }
+        .card:nth-child(3) { transform: rotate(-1deg); z-index: 1; }
+
+        .card.exit {
+            transform: translateX(-150%) rotate(-30deg) !important;
+            opacity: 0;
+        }
+
+        .hint-swipe {
+            margin-top: 15px;
+            font-size: 0.8rem;
+            color: #777;
+        }
+
+        /* Animasi Lainnya */
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        .particle {
+            position: absolute;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Musik Latar (Opsional: ganti link mp3 jika punya sendiri) -->
+    <audio id="bgMusic" loop>
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+    </audio>
+
+    <div id="stars-container"></div>
+
+    <!-- Screen 1: Kado -->
+    <div id="gift-screen">
+        <div class="gift-box" onclick="bukakado(event)">🎁</div>
+        <div class="click-me">SENTUH KADONYA!</div>
+    </div>
+
+    <!-- Screen 2: Isi -->
+    <div id="main-content">
+        <div class="text-card">
+            <h1>HBD Sayang! ❤️</h1>
+            <div id="typing-box"></div>
+        </div>
+
+        <div class="album-container" id="album">
+            <!-- Kartu 3 -->
+            <div class="card" onclick="nextCard(this)">
+                <img src="https://picsum.photos/seed/3/400/500" alt="Foto">
+                <div class="label">Bahagia Selalu! 🌸</div>
+            </div>
+            <!-- Kartu 2 -->
+            <div class="card" onclick="nextCard(this)">
+                <img src="https://picsum.photos/seed/2/400/500" alt="Foto">
+                <div class="label">Momen Indah ✨</div>
+            </div>
+            <!-- Kartu 1 (Paling Atas) -->
+            <div class="card" onclick="nextCard(this)">
+                <img src="https://picsum.photos/seed/1/400/500" alt="Foto">
+                <div class="label">Our Memory ❤️</div>
+            </div>
+        </div>
+        <div class="hint-swipe">Sentuh foto untuk melihat lainnya</div>
+    </div>
+
+    <script>
+        const ucapan = "Selamat ulang tahun ya! Semoga harimu menyenangkan dan penuh kejutan manis. Aku harap kamu suka web kecil ini. I Love You so much! ❤️✨";
+        
+        // Buat Bintang di Latar
+        const starsContainer = document.getElementById('stars-container');
+        for(let i=0; i<50; i++) {
+            const star = document.createElement('div');
+            star.style.position = 'absolute';
+            star.style.width = '2px';
+            star.style.height = '2px';
+            star.style.backgroundColor = 'white';
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.opacity = Math.random();
+            starsContainer.appendChild(star);
+        }
+
+        function bukakado(e) {
+            // Putar Musik
+            document.getElementById('bgMusic').play();
+
+            // Efek Ledakan
+            for(let i=0; i<20; i++) {
+                createParticle(e.clientX, e.clientY);
+            }
+
+            // Sembunyikan Kado
+            document.getElementById('gift-screen').style.transform = 'scale(0)';
+            document.getElementById('gift-screen').style.opacity = '0';
+
+            // Tampilkan Konten
+            setTimeout(() => {
+                document.getElementById('gift-screen').style.display = 'none';
+                const main = document.getElementById('main-content');
+                main.style.display = 'flex';
+                setTimeout(() => {
+                    main.style.opacity = '1';
+                    mulaiKetik();
+                }, 100);
+            }, 600);
+        }
+
+        function mulaiKetik() {
+            const box = document.getElementById('typing-box');
+            let i = 0;
+            function ketik() {
+                if(i < ucapan.length) {
+                    box.innerHTML += ucapan.charAt(i);
+                    i++;
+                    setTimeout(ketik, 50);
+                }
+            }
+            ketik();
+        }
+
+        function nextCard(el) {
+            el.classList.add('exit');
+            // Jika kartu habis, kembalikan tumpukan setelah 1.5 detik
+            const activeCards = document.querySelectorAll('.card:not(.exit)');
+            if(activeCards.length === 0) {
+                setTimeout(() => {
+                    document.querySelectorAll('.card').forEach(c => c.classList.remove('exit'));
+                }, 1500);
+            }
+        }
+
+        function createParticle(x, y) {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            p.innerHTML = ['❤️', '✨', '🎈'][Math.floor(Math.random()*3)];
+            p.style.left = x + 'px';
+            p.style.top = y + 'px';
+            p.style.fontSize = '20px';
+            document.body.appendChild(p);
+
+            const destinationX = (Math.random() - 0.5) * 300;
+            const destinationY = (Math.random() - 0.5) * 300;
+
+            p.animate([
+                { transform: 'translate(0, 0) scale(1)', opacity: 1 },
+                { transform: `translate(${destinationX}px, ${destinationY}px) scale(0)`, opacity: 0 }
+            ], {
+                duration: 1000,
+                easing: 'ease-out'
+            }).onfinish = () => p.remove();
+        }
+    </script>
+</body>
+</html>
+
             width: 150px;
             height: 150px;
             background-color: #ff4d4d; /* Warna kado jika tidak ada gambar */
