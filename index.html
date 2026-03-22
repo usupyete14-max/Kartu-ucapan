@@ -3,14 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kejutan Untukmu!</title>
-    <!-- Font Cantik -->
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+    <title>Kejutan Spesial Untukmu!</title>
     <style>
         :root {
-            --pink-primary: #ff4d6d;
-            --pink-soft: #ffb3c1;
-            --dark-bg: #0f0f0f;
+            --primary-pink: #ff4d6d;
+            --soft-pink: #ffb3c1;
+            --dark-bg: #121212;
         }
 
         body, html {
@@ -18,603 +16,333 @@
             padding: 0;
             width: 100%;
             height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             background-color: var(--dark-bg);
-            font-family: 'Quicksand', sans-serif;
+            font-family: 'Segoe UI', Roboto, sans-serif;
             overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             color: white;
-            touch-action: manipulation;
         }
 
-        /* Latar Belakang Berbintang */
-        #stars-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-        }
-
-        /* KADO AWAL */
-        #gift-screen {
-            position: absolute;
-            z-index: 100;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            transition: all 0.8s ease;
-        }
-
-        .gift-box {
-            width: 140px;
-            height: 140px;
-            background-color: var(--pink-primary);
-            border-radius: 15px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 70px;
-            box-shadow: 0 0 50px rgba(255, 77, 109, 0.5);
-            cursor: pointer;
-            animation: shake 1.5s infinite;
-        }
-
-        @keyframes shake {
-            0%, 100% { transform: rotate(0); }
-            20% { transform: rotate(10deg); }
-            40% { transform: rotate(-10deg); }
-            60% { transform: rotate(5deg); }
-            80% { transform: rotate(-5deg); }
-        }
-
-        .click-me {
-            margin-top: 20px;
-            color: var(--pink-soft);
-            font-weight: 600;
-            letter-spacing: 2px;
-            animation: fadeInOut 2s infinite;
-        }
-
-        /* KONTEN UTAMA */
-        #main-content {
-            display: none;
-            opacity: 0;
-            flex-direction: column;
-            align-items: center;
-            width: 90%;
-            max-width: 400px;
-            z-index: 10;
-            transition: opacity 1s ease;
-        }
-
-        .text-card {
-            background: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(15px);
-            padding: 25px;
-            border-radius: 25px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            text-align: center;
-            margin-bottom: 25px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
-        }
-
-        h1 {
-            font-family: 'Dancing Script', cursive;
-            font-size: 2.5rem;
-            margin: 0 0 10px 0;
-            color: var(--pink-primary);
-        }
-
-        #typing-box {
-            font-size: 1rem;
-            line-height: 1.6;
-            min-height: 100px;
-        }
-
-        /* BUKU FOTO / ALBUM */
-        .album-container {
+        #main-container {
             position: relative;
-            width: 220px;
-            height: 280px;
-            perspective: 1000px;
-        }
-
-        .card {
-            position: absolute;
             width: 100%;
             height: 100%;
-            background: white;
-            border-radius: 15px;
-            padding: 10px;
-            box-sizing: border-box;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-            transition: transform 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.5s;
-            cursor: pointer;
             display: flex;
             flex-direction: column;
-        }
-
-        .card img {
-            width: 100%;
-            height: 82%;
-            object-fit: cover;
-            border-radius: 10px;
-        }
-
-        .card .label {
-            height: 18%;
-            display: flex;
-            align-items: center;
             justify-content: center;
-            color: #333;
-            font-family: 'Dancing Script', cursive;
-            font-size: 1.1rem;
+            align-items: center;
+            cursor: pointer;
         }
 
-        /* Tumpukan Kartu */
-        .card:nth-child(1) { transform: rotate(-3deg); z-index: 3; }
-        .card:nth-child(2) { transform: rotate(2deg); z-index: 2; }
-        .card:nth-child(3) { transform: rotate(-1deg); z-index: 1; }
-
-        .card.exit {
-            transform: translateX(-150%) rotate(-30deg) !important;
-            opacity: 0;
-        }
-
-        .hint-swipe {
-            margin-top: 15px;
-            font-size: 0.8rem;
-            color: #777;
-        }
-
-        /* Animasi Lainnya */
-        @keyframes fadeInOut {
-            0%, 100% { opacity: 0.3; }
-            50% { opacity: 1; }
-        }
-
-        .particle {
+        /* --- KADO AWAL --- */
+        #gift-box {
             position: absolute;
-            pointer-events: none;
-        }
-    </style>
-</head>
-<body>
-
-    <!-- Musik Latar (Opsional: ganti link mp3 jika punya sendiri) -->
-    <audio id="bgMusic" loop>
-        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
-    </audio>
-
-    <div id="stars-container"></div>
-
-    <!-- Screen 1: Kado -->
-    <div id="gift-screen">
-        <div class="gift-box" onclick="bukakado(event)">🎁</div>
-        <div class="click-me">SENTUH KADONYA!</div>
-    </div>
-
-    <!-- Screen 2: Isi -->
-    <div id="main-content">
-        <div class="text-card">
-            <h1>HBD Sayang! ❤️</h1>
-            <div id="typing-box"></div>
-        </div>
-
-        <div class="album-container" id="album">
-            <!-- Kartu 3 -->
-            <div class="card" onclick="nextCard(this)">
-                <img src="https://picsum.photos/seed/3/400/500" alt="Foto">
-                <div class="label">Bahagia Selalu! 🌸</div>
-            </div>
-            <!-- Kartu 2 -->
-            <div class="card" onclick="nextCard(this)">
-                <img src="https://picsum.photos/seed/2/400/500" alt="Foto">
-                <div class="label">Momen Indah ✨</div>
-            </div>
-            <!-- Kartu 1 (Paling Atas) -->
-            <div class="card" onclick="nextCard(this)">
-                <img src="https://picsum.photos/seed/1/400/500" alt="Foto">
-                <div class="label">Our Memory ❤️</div>
-            </div>
-        </div>
-        <div class="hint-swipe">Sentuh foto untuk melihat lainnya</div>
-    </div>
-
-    <script>
-        const ucapan = "Selamat ulang tahun ya! Semoga harimu menyenangkan dan penuh kejutan manis. Aku harap kamu suka web kecil ini. I Love You so much! ❤️✨";
-        
-        // Buat Bintang di Latar
-        const starsContainer = document.getElementById('stars-container');
-        for(let i=0; i<50; i++) {
-            const star = document.createElement('div');
-            star.style.position = 'absolute';
-            star.style.width = '2px';
-            star.style.height = '2px';
-            star.style.backgroundColor = 'white';
-            star.style.left = Math.random() * 100 + '%';
-            star.style.top = Math.random() * 100 + '%';
-            star.style.opacity = Math.random();
-            starsContainer.appendChild(star);
-        }
-
-        function bukakado(e) {
-            // Putar Musik
-            document.getElementById('bgMusic').play();
-
-            // Efek Ledakan
-            for(let i=0; i<20; i++) {
-                createParticle(e.clientX, e.clientY);
-            }
-
-            // Sembunyikan Kado
-            document.getElementById('gift-screen').style.transform = 'scale(0)';
-            document.getElementById('gift-screen').style.opacity = '0';
-
-            // Tampilkan Konten
-            setTimeout(() => {
-                document.getElementById('gift-screen').style.display = 'none';
-                const main = document.getElementById('main-content');
-                main.style.display = 'flex';
-                setTimeout(() => {
-                    main.style.opacity = '1';
-                    mulaiKetik();
-                }, 100);
-            }, 600);
-        }
-
-        function mulaiKetik() {
-            const box = document.getElementById('typing-box');
-            let i = 0;
-            function ketik() {
-                if(i < ucapan.length) {
-                    box.innerHTML += ucapan.charAt(i);
-                    i++;
-                    setTimeout(ketik, 50);
-                }
-            }
-            ketik();
-        }
-
-        function nextCard(el) {
-            el.classList.add('exit');
-            // Jika kartu habis, kembalikan tumpukan setelah 1.5 detik
-            const activeCards = document.querySelectorAll('.card:not(.exit)');
-            if(activeCards.length === 0) {
-                setTimeout(() => {
-                    document.querySelectorAll('.card').forEach(c => c.classList.remove('exit'));
-                }, 1500);
-            }
-        }
-
-        function createParticle(x, y) {
-            const p = document.createElement('div');
-            p.className = 'particle';
-            p.innerHTML = ['❤️', '✨', '🎈'][Math.floor(Math.random()*3)];
-            p.style.left = x + 'px';
-            p.style.top = y + 'px';
-            p.style.fontSize = '20px';
-            document.body.appendChild(p);
-
-            const destinationX = (Math.random() - 0.5) * 300;
-            const destinationY = (Math.random() - 0.5) * 300;
-
-            p.animate([
-                { transform: 'translate(0, 0) scale(1)', opacity: 1 },
-                { transform: `translate(${destinationX}px, ${destinationY}px) scale(0)`, opacity: 0 }
-            ], {
-                duration: 1000,
-                easing: 'ease-out'
-            }).onfinish = () => p.remove();
-        }
-    </script>
-</body>
-</html>
-
-            width: 150px;
-            height: 150px;
-            background-color: #ff4d4d; /* Warna kado jika tidak ada gambar */
-            /* uncomment baris di bawah jika ada gambar kado.png */
-            /* background-image: url('kado.png'); */
-            background-size: cover;
-            background-position: center;
+            width: 160px;
+            height: 160px;
+            background-color: var(--primary-pink);
             border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(255, 77, 77, 0.5);
+            box-shadow: 0 0 40px rgba(255, 77, 109, 0.4);
             display: flex;
             justify-content: center;
             align-items: center;
-            transition: transform 0.3s ease, opacity 0.5s ease;
-            z-index: 10;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 100;
+        }
+
+        #gift-box::before {
+            content: "🎁";
+            font-size: 80px;
         }
 
         #gift-box:hover {
             transform: scale(1.1) rotate(5deg);
         }
 
-        #click-text {
+        #click-hint {
             position: absolute;
-            bottom: -40px;
-            font-size: 1.2rem;
-            color: #ffcccc;
-            animation: pulse 1.5s infinite;
+            bottom: -50px;
+            font-size: 1.1rem;
+            color: var(--soft-pink);
+            animation: bounce 2s infinite;
             white-space: nowrap;
         }
 
-        @keyframes pulse {
-            0% { opacity: 0.5; }
-            50% { opacity: 1; }
-            100% { opacity: 0.5; }
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+            40% {transform: translateY(-10px);}
+            60% {transform: translateY(-5px);}
         }
 
-        /* --- BAGIAN 2: KEJUTAN (Hati & Ucapan) --- */
+        /* --- KONTEN UTAMA (SETELAH KLIK) --- */
         #surprise-content {
-            display: none; /* Sembunyi dulu */
+            display: none;
             flex-direction: column;
             align-items: center;
-            text-align: center;
+            width: 90%;
+            max-width: 450px;
             opacity: 0;
             transition: opacity 1s ease;
-            width: 90%;
-            max-width: 600px;
+            z-index: 10;
         }
 
-        /* Gaya Kotak Ucapan */
-        .message-box {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 25px;
+        .message-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
             border-radius: 20px;
-            backdrop-filter: blur(5px);
-            border: 1px rgba(255, 255, 255, 0.2) solid;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            margin-bottom: 40px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            margin-bottom: 30px;
             width: 100%;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
 
-        .message-box h1 {
-            font-size: 2.5rem;
-            margin-top: 0;
-            background: linear-gradient(to right, #ff4d4d, #f9cb9c);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        .message-card h1 {
+            margin: 0 0 10px 0;
+            font-size: 1.8rem;
+            color: var(--primary-pink);
         }
 
-        /* Efek Ketik */
         #typing-text {
-            font-size: 1.3rem;
-            line-height: 1.6;
-            margin: 0;
-            min-height: 1.6em; /* Mencegah lonjakan layout */
+            font-size: 1rem;
+            line-height: 1.5;
+            color: #eee;
+            min-height: 3em;
         }
 
-        /* Gaya Hati Interaktif */
-        .heart-container {
+        /* --- MINI ALBUM (SWIPE BOOK) --- */
+        .album-wrapper {
             position: relative;
-            width: 250px;
-            height: 250px;
+            width: 220px;
+            height: 280px;
+            perspective: 1000px;
             margin-top: 20px;
-            animation: heartBeat 1.5s infinite; /* Detak jantung */
         }
 
-        .heart {
+        .photo-card {
             position: absolute;
-            width: 125px;
-            height: 125px;
-            background-color: #ff4d4d;
-            background-image: url('foto.jpg'); /* GANTI DENGAN FOTO ANDA */
-            background-size: cover;
-            background-position: center;
-            transform: rotate(-45deg);
-            top: 62.5px;
-            left: 62.5px;
-            border: 2px solid white;
-            box-shadow: 0 0 20px rgba(255, 77, 77, 0.8);
+            width: 100%;
+            height: 100%;
+            background: white;
+            border-radius: 12px;
+            padding: 10px;
+            box-sizing: border-box;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.6s;
+            cursor: grab;
+            user-select: none;
+            display: flex;
+            flex-direction: column;
         }
 
-        .heart::before,
-        .heart::after {
-            content: "";
-            position: absolute;
-            width: 125px;
-            height: 125px;
-            background-color: inherit;
-            background-image: inherit;
-            background-size: cover;
-            background-position: inherit;
-            border-radius: 50%;
-            border: 2px solid white;
+        .photo-card img {
+            width: 100%;
+            height: 85%;
+            object-fit: cover;
+            border-radius: 8px;
+            pointer-events: none;
         }
 
-        .heart::before {
-            top: -62.5px;
-            left: 0;
-            border-bottom: none;
-            border-right: none;
+        .photo-card .caption {
+            height: 15%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+            font-family: 'Dancing Script', cursive; /* Gunakan font cantik jika ada */
+            font-size: 0.9rem;
+            font-weight: bold;
         }
 
-        .heart::after {
-            top: 0;
-            left: 62.5px;
-            border-left: none;
-            border-bottom: none;
+        /* Variasi rotasi tumpukan agar terlihat alami seperti buku/tumpukan kartu */
+        .photo-card:nth-child(1) { transform: rotate(-2deg); z-index: 5; }
+        .photo-card:nth-child(2) { transform: rotate(3deg); z-index: 4; }
+        .photo-child:nth-child(3) { transform: rotate(-1deg); z-index: 3; }
+
+        /* Kelas untuk kartu yang sudah di-swipe */
+        .swiped {
+            transform: translateX(-150%) rotate(-20deg) !important;
+            opacity: 0;
+            pointer-events: none;
         }
 
-        @keyframes heartBeat {
-            0% { transform: scale(1); }
-            15% { transform: scale(1.1); }
-            30% { transform: scale(1); }
-            45% { transform: scale(1.15); }
-            60% { transform: scale(1); }
-        }
-
-        /* --- BAGIAN 3: PARTIKEL & EFEK --- */
+        /* --- PARTIKEL --- */
         .particle {
             position: absolute;
-            border-radius: 50%;
             pointer-events: none;
-            opacity: 0;
-            animation: popOut forwards;
+            z-index: 1;
         }
 
-        @keyframes popOut {
-            0% { transform: translate(0, 0) scale(0); opacity: 1; }
-            100% { transform: translate(var(--dx), var(--dy)) scale(1); opacity: 0; }
+        @keyframes fall {
+            to { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+        }
+
+        #instruction {
+            margin-top: 15px;
+            font-size: 0.8rem;
+            color: #888;
+            font-style: italic;
         }
 
     </style>
 </head>
 <body>
 
-    <audio id="birthday-song" loop>
-        <source src="lagu.mp3" type="audio/mpeg">
-        Browser Anda tidak mendukung audio.
-    </audio>
-
-    <div id="main-container" onclick="openGift()">
+    <div id="main-container">
         
-        <div id="gift-box">
-            <div id="click-text">Klik untuk Kejutan! 🎁</div>
+        <!-- BAGIAN 1: KADO -->
+        <div id="gift-box" onclick="triggerSurprise(event)">
+            <div id="click-hint">Klik Kadonya! 🎁</div>
         </div>
 
+        <!-- BAGIAN 2: ISI KEJUTAN -->
         <div id="surprise-content">
-            <div class="message-box">
-                <h1>Selamat Ulang Tahun!</h1>
+            <div class="message-card">
+                <h1>HBD Sayang! ✨</h1>
                 <p id="typing-text"></p>
             </div>
-            
-            <div class="heart-container">
-                <div class="heart"></div>
+
+            <!-- MINI ALBUM -->
+            <div class="album-wrapper" id="album">
+                <!-- Kartu 3 -->
+                <div class="photo-card" onclick="swipeCard(this)">
+                    <img src="https://picsum.photos/seed/love3/300/400" alt="Foto 3">
+                    <div class="caption">Bahagia Selalu! ❤️</div>
+                </div>
+                <!-- Kartu 2 -->
+                <div class="photo-card" onclick="swipeCard(this)">
+                    <img src="https://picsum.photos/seed/love2/300/400" alt="Foto 2">
+                    <div class="caption">Momen Berharga ✨</div>
+                </div>
+                <!-- Kartu 1 (Paling Atas) -->
+                <div class="photo-card" onclick="swipeCard(this)">
+                    <img src="https://picsum.photos/seed/love1/300/400" alt="Foto 1">
+                    <div class="caption">First Memory 🌹</div>
+                </div>
             </div>
+            
+            <p id="instruction">Geser atau Klik kartu foto di atas ^</p>
         </div>
 
     </div>
 
     <script>
-        // --- JAVASCRIPT ---
+        const message = "Selamat ulang tahun ya! Semoga panjang umur, sehat selalu, dan semua impianmu tercapai. Aku selalu di sini buat dukung kamu. Love you! ❤️✨";
+        let isTypingStarted = false;
 
-        // Teks ucapan yang akan diketik
-        const textToType = "Untuk seseorang yang spesial... Semoga harimu penuh tawa, kebahagiaan, dan semua impianmu menjadi kenyataan. Terima kasih sudah menjadi bagian dari hidupku! ❤️";
-        const typingSpeed = 50; // milidetik per karakter
+        function triggerSurprise(e) {
+            e.stopPropagation();
+            const gift = document.getElementById('gift-box');
+            const content = document.getElementById('surprise-content');
 
-        let isOpened = false;
+            // Efek ledakan partikel
+            createExplosion(e.clientX, e.clientY);
 
-        function openGift() {
-            if (isOpened) return; // Mencegah klik ganda
-            isOpened = true;
+            // Sembunyikan kado
+            gift.style.transform = "scale(0)";
+            gift.style.opacity = "0";
 
-            const giftBox = document.getElementById('gift-box');
-            const surpriseContent = document.getElementById('surprise-content');
-            const song = document.getElementById('birthday-song');
-
-            // 1. Efek Suara (Putar Lagu)
-            song.play().catch(e => console.log("Audio autoplay diblokir browser"));
-
-            // 2. Animasi Ledakan Kado (Partikel)
-            createExplosion(giftBox.offsetLeft + 75, giftBox.offsetTop + 75);
-
-            // 3. Sembunyikan Kado
-            giftBox.style.transform = 'scale(0) rotate(-20deg)';
-            giftBox.style.opacity = '0';
-
-            // 4. Tampilkan Konten Kejutan
             setTimeout(() => {
-                giftBox.style.display = 'none';
-                surpriseContent.style.display = 'flex';
-                // Trigger reflow untuk animasi fade-in
-                surpriseContent.offsetHeight; 
-                surpriseContent.style.opacity = '1';
-                
-                // 5. Mulai Efek Mengetik
-                setTimeout(startTyping, 1000);
-                
-                // 6. Mulai Partikel Latar Belakang
-                setInterval(createBackgroundParticle, 200);
-            }, 500);
+                gift.style.display = "none";
+                content.style.display = "flex";
+                // Trigger Fade In
+                setTimeout(() => {
+                    content.style.opacity = "1";
+                    startTyping();
+                    startConfetti();
+                }, 100);
+            }, 400);
         }
 
-        // Fungsi Efek Mengetik
         function startTyping() {
-            const textElement = document.getElementById('typing-text');
-            let charIndex = 0;
-
+            if (isTypingStarted) return;
+            isTypingStarted = true;
+            const element = document.getElementById('typing-text');
+            let i = 0;
             function type() {
-                if (charIndex < textToType.length) {
-                    textElement.innerHTML += textToType.charAt(charIndex);
-                    charIndex++;
-                    setTimeout(type, typingSpeed);
+                if (i < message.length) {
+                    element.innerHTML += message.charAt(i);
+                    i++;
+                    setTimeout(type, 50);
                 }
             }
             type();
         }
 
-        // Fungsi Animasi Ledakan (Partikel Warna-warni)
-        function createExplosion(x, y) {
-            const colors = ['#ff4d4d', '#f9cb9c', '#fff', '#ffcccc'];
-            for (let i = 0; i < 40; i++) {
-                const particle = document.createElement('div');
-                particle.classList.add('particle');
-                
-                // Gaya acak
-                const color = colors[Math.floor(Math.random() * colors.length)];
-                const size = Math.random() * 10 + 5 + 'px';
-                particle.style.width = size;
-                particle.style.height = size;
-                particle.style.backgroundColor = color;
-                
-                // Arah ledakan acak (menggunakan CSS variables)
-                const dx = (Math.random() - 0.5) * 300 + 'px';
-                const dy = (Math.random() - 0.5) * 300 + 'px';
-                particle.style.setProperty('--dx', dx);
-                particle.style.setProperty('--dy', dy);
-                
-                // Posisi awal
-                particle.style.left = x + 'px';
-                particle.style.top = y + 'px';
-                
-                // Durasi acak
-                particle.style.animationDuration = Math.random() * 0.5 + 0.5 + 's';
-
-                document.body.appendChild(particle);
-
-                // Hapus setelah animasi
-                setTimeout(() => particle.remove(), 1000);
+        // Fungsi untuk swipe kartu (Buku Foto)
+        function swipeCard(card) {
+            card.classList.add('swiped');
+            
+            // Jika kartu terakhir sudah di swipe, bisa direset atau biarkan kosong
+            // Untuk demo ini, jika sudah habis kita munculkan kembali setelah 2 detik
+            const remaining = document.querySelectorAll('.photo-card:not(.swiped)');
+            if (remaining.length === 0) {
+                setTimeout(() => {
+                    document.querySelectorAll('.photo-card').forEach(c => c.classList.remove('swiped'));
+                }, 1500);
             }
         }
 
-        // Fungsi Partikel Latar Belakang (Seperti Bintang/Hati Jatuh)
-        function createBackgroundParticle() {
-            const container = document.getElementById('main-container');
-            const particle = document.createElement('div');
-            particle.classList.add('particle');
-            
-            const isHeart = Math.random() > 0.5;
-            
-            // Gaya partikel latar
-            particle.style.width = isHeart ? '10px' : '5px';
-            particle.style.height = isHeart ? '10px' : '5px';
-            particle.style.backgroundColor = isHeart ? '#ffcccc' : '#fff';
-            particle.style.borderRadius = '50%';
-            particle.style.opacity = '0.5';
-            
-            // Posisi jatuh acak
-            particle.style.left = Math.random() * 100 + '%';
-            particle.style.top = '-10px';
-            
-            // Animasi jatuh
-            particle.style.animation = `fall ${Math.random() * 3 + 2}s linear forwards`;
-            
-            container.appendChild(particle);
-            
-            // Hapus setelah jatuh
-            setTimeout(() => particle.remove(), 5000);
+        // Efek Ledakan Partikel
+        function createExplosion(x, y) {
+            for (let i = 0; i < 30; i++) {
+                const p = document.createElement('div');
+                p.classList.add('particle');
+                p.innerHTML = ['❤️', '✨', '🌸', '⭐'][Math.floor(Math.random() * 4)];
+                p.style.left = x + 'px';
+                p.style.top = y + 'px';
+                p.style.fontSize = Math.random() * 20 + 10 + 'px';
+                
+                const angle = Math.random() * Math.PI * 2;
+                const dist = Math.random() * 150 + 50;
+                const tx = Math.cos(angle) * dist;
+                const ty = Math.sin(angle) * dist;
+
+                p.animate([
+                    { transform: 'translate(0, 0) scale(1)', opacity: 1 },
+                    { transform: `translate(${tx}px, ${ty}px) scale(0)`, opacity: 0 }
+                ], { duration: 1000, easing: 'ease-out' });
+
+                document.body.appendChild(p);
+                setTimeout(() => p.remove(), 1000);
+            }
         }
 
-        // Tambahkan gaya animasi jatuh secara dinamis
-        const sheet = window.document.styleSheets[0];
-        sheet.insertRule('@keyframes fall { to { transform: translateY(100vh); opacity: 0; } }', sheet.cssRules.length);
+        // Hujan Konfeti Latar Belakang
+        function startConfetti() {
+            setInterval(() => {
+                const p = document.createElement('div');
+                p.classList.add('particle');
+                p.innerHTML = '❤️';
+                p.style.left = Math.random() * 100 + 'vw';
+                p.style.top = '-20px';
+                p.style.opacity = Math.random();
+                p.style.fontSize = Math.random() * 15 + 10 + 'px';
+                p.style.animation = `fall ${Math.random() * 3 + 2}s linear forwards`;
+                document.body.appendChild(p);
+                setTimeout(() => p.remove(), 5000);
+            }, 300);
+        }
+
+        // Menambahkan swipe gesture sederhana untuk mobile
+        let touchStartX = 0;
+        document.getElementById('album').addEventListener('touchstart', e => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        document.getElementById('album').addEventListener('touchend', e => {
+            let touchEndX = e.changedTouches[0].screenX;
+            if (touchStartX - touchEndX > 50) { // Swipe kiri
+                const cards = document.querySelectorAll('.photo-card:not(.swiped)');
+                if (cards.length > 0) {
+                    swipeCard(cards[cards.length - 1]);
+                }
+            }
+        });
 
     </script>
 </body>
 </html>
+
